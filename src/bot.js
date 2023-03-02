@@ -33,7 +33,7 @@ client.on('messageCreate', async (message)=> {
         message.channel.send(`kicking user ${args[0]}`)
         const response = await message.guild.members.kick(args[0]).catch(console.error);
         if(response){
-            console.log("Response:", response.tag)
+            message.reply(`${response.username} was kicked from the server.`)
         }
         // const array = [...member]
         // array.forEach(element => {
