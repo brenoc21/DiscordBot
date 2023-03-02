@@ -10,7 +10,8 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildModeration,
-    GatewayIntentBits.DirectMessageTyping
+    GatewayIntentBits.DirectMessageTyping,
+    GatewayIntentBits.GuildVoiceStates
   ]
 })
 const prefix = process.env.PREFIX
@@ -53,12 +54,26 @@ client.on('messageCreate', async (message)=> {
        if(args.length < 2) return message.reply("Algum parametro está faltando!")
        const channel = args[args.length-1]
        const users = args.slice(0, args.length - 1)
+      
         try{ 
         if(!message.member.permissions.has(PermissionsBitField.Flags.MoveMembers))return message.reply("Você não tem permissão para mover usuários.")
+        const users = message.content.trim().substring(commandName.length+1, message.content.length - args[args.length-1].length).split(',')
+        const treatedUsers = users.map(user => {
+            let treated = user
+            if(treated.charAt(0) === ' '){
+                treated = treated.substring(1)
+                   
+            }
+            if(treated.charAt(treated.length -1) === ' '){
+                treated = treated.substring(0, treated.length -1)
+                   
+            }
+            return treated
+        })
         if(args.length === 0) return message.reply('Por favor diga quem você quer mover.')
         const members = [...await message.guild.members.fetch()]
         const channels = [...await message.guild.channels.fetch()]
-        const movemembers = getMultipleUsersByName(members, users)
+        const movemembers = getMultipleUsersByName(members, treatedUsers)
         const moveChannel = getSingleChannelByName(channels, channel)
        
         movemembers.map((member)=> {
@@ -80,9 +95,23 @@ client.on('messageCreate', async (message)=> {
        if(args.length === 0) return message.reply("Algum parametro está faltando!")
         try{ 
         if(!message.member.permissions.has(PermissionsBitField.Flags.MoveMembers))return message.reply("Você não tem permissão para mover usuários.")
+        const users = message.content.trim().substring(commandName.length+1).split(',')
+        const treatedUsers = users.map(user => {
+            let treated = user
+            if(treated.charAt(0) === ' '){
+                treated = treated.substring(1)
+                   
+            }
+            if(treated.charAt(treated.length -1) === ' '){
+                treated = treated.substring(0, treated.length -1)
+                   
+            }
+            return treated
+        })
+        
         if(args.length === 0) return message.reply('Por favor diga quem você quer mover.')
         const members = [...await message.guild.members.fetch()]
-        const movemembers = getMultipleUsersByName(members, args)
+        const movemembers = getMultipleUsersByName(members, treatedUsers)
         movemembers.map((member)=> {
             return member[0][1].voice.disconnect().then(()=> message.reply(`usuário ${member[0][1].user.tag} foi desconectado.`))
         })
@@ -95,6 +124,84 @@ client.on('messageCreate', async (message)=> {
     }
 }
 )
+client.on('messageCreate', async (message)=> {
+    if(message.content.startsWith(prefix)){
+       const [commandName, ...args] = message.content.trim().substring(prefix.length).split(/\s+/)
+       if(commandName === "teste"){
+        
+        if(args.length === 0) return message.reply("Algum parametro está faltando!")
+        const users = message.content.trim().substring(commandName.length+1, message.content.length - args[args.length-1].length).split(',')
+        const treatedUsers = users.map(user => {
+            let treated = user
+            if(treated.charAt(0) === ' '){
+                treated = treated.substring(1)
+                   
+            }
+            if(treated.charAt(treated.length -1) === ' '){
+                treated = treated.substring(0, treated.length -1)
+                   
+            }
+            return treated
+        })
+        console.log(treatedUsers)
+        
+    }
+
+    //    if(args.length === 0) return message.reply("Algum parametro está faltando!")
+    //     try{ 
+    //     if(!message.member.permissions.has(PermissionsBitField.Flags.MoveMembers))return message.reply("Você não tem permissão para mover usuários.")
+    //     if(args.length === 0) return message.reply('Por favor diga quem você quer mover.')
+    //     const members = [...await message.guild.members.fetch()]
+    //     const movemembers = getMultipleUsersByName(members, args)
+    //     movemembers.map((member)=> {
+    //         return member[0][1].voice.disconnect().then(()=> message.reply(`usuário ${member[0][1].user.tag} foi desconectado.`))
+    //     })
+    //    }catch(err){
+    //     if(err){
+    //         return message.reply("Ocorreu um erro. Verifique se o nome dos usuários e do canal estão corretos!")
+    //     }
+    // }
+       }
+    }
+
+)
+client.on('messageCreate', async (message)=> {
+    
+    if(message.content.startsWith(prefix)){
+       
+       const [commandName, ...args] = message.content.trim().substring(prefix.length).split(/\s+/)
+       if(commandName === "moveAll"){
+        
+       if(args.length < 2) return message.reply("Algum parametro está faltando!")
+       
+      
+        try{ 
+            
+        if(!message.member.permissions.has(PermissionsBitField.Flags.MoveMembers))return message.reply("Você não tem permissão para mover usuários.")
+        if(args.length === 0) return message.reply('Por favor diga quem você quer mover.')
+        const channels = [...await message.guild.channels.fetch()]
+        console.log("im here after channels fetch")
+        const channelFrom = getSingleChannelByName(channels, args[0])
+        console.log("im here after channel from")
+        const channelTo = getSingleChannelByName(channels, args[1])
+        const membersToMove = channelFrom.members
+        console.log("im here after channel from", membersToMove, " channel to name: ", channelTo.members, channelTo.name, " channel from name: ", channelFrom.members, channelFrom.name,)
+        membersToMove.map(member => {
+            console.log(member)
+            member.voice.setChannel(channelTo)
+        })
+        
+       }catch(err){
+        if(err){
+            console.log(err)
+            return message.reply("Ocorreu um erro.")
+        }
+    }
+       }
+    }
+}
+)
+
 
 
         //message.content para pegar o testo da mensagem
