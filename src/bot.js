@@ -1,11 +1,15 @@
 
 import dotenv from 'dotenv'
-import { Client, GatewayIntentBits, PermissionsBitField } from 'discord.js'
+import { ActivityType, Client, GatewayIntentBits, PermissionsBitField } from 'discord.js'
 import { getSingleUserByName, getMultipleUsersByName, getSingleChannelByName } from './utils/findFunctions.js'
 import moveAll from './commands/moveAll.js';
 import kick from './commands/kick.js';
 import move from './commands/move.js';
 import disconnect from './commands/disconnect.js';
+import add from './commands/add.js';
+import play from './commands/play.js';
+import associations from './commands/associations.js';
+import scrap from './commands/scrap.js';
 dotenv.config();
 const client = new Client({ 
     intents: [
@@ -20,9 +24,13 @@ const client = new Client({
   ]
 })
 const prefix = process.env.PREFIX
-
+client.queue = new Map()
 client.on('ready', ()=> {
     console.log(`${client.user.username} logged in!!!`)
+    client.user.setActivity({
+        name: "$command",
+        type: ActivityType.Playing
+    })
 })
 
 client.login(process.env.BOT_TOKEN)
@@ -37,6 +45,13 @@ client.on('messageCreate', async (message)=> {
         case 'dc': disconnect(message, PermissionsBitField, commandName, args, getMultipleUsersByName)
         break;
         case 'moveAll': moveAll(message, PermissionsBitField, args, getSingleChannelByName)
+        case 'add': add(client, message, args, getSingleUserByName, getSingleChannelByName)
+        break;
+        case 'play': play(client, message, args)
+        break;
+        case 'associations': associations(client, message, args)
+        break;
+        case 'scrap': scrap(message, args, commandName)
         break;
         default: message.reply(`Commando ${commandName} não foi encontrado.`)
        }
