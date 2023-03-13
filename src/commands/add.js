@@ -1,4 +1,5 @@
-export default async function add(client, message, args, getSingleUserByName, getSingleChannelByName){
+
+export default async function add( message, args){
     if(args.length === 0) return message.reply("Algum parametro está faltando!")
     try{
 

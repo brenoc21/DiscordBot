@@ -1,4 +1,7 @@
-export default async function disconnect(message, PermissionsBitField, commandName, args, getMultipleUsersByName){
+
+import { getMultipleUsersByName } from '../utils/findFunctions.js'
+
+export default async function disconnect(message, PermissionsBitField, commandName, args){
     if(args.length === 0) return message.reply("Algum parametro está faltando!")
         try{ 
         if(!message.member.permissions.has(PermissionsBitField.Flags.MoveMembers))return message.reply("Você não tem permissão para mover usuários.")

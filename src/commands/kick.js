@@ -1,4 +1,6 @@
-export default async function kick(message, PermissionsBitField, args, getSingleUserByName){
+import { getSingleUserByName} from '../utils/findFunctions.js'
+
+export default async function kick(message, PermissionsBitField, args){
     if(!message.member.permissions.has(PermissionsBitField.Flags.KickMembers))return message.reply("Você não tem permissão para kickar usuários.")
         if(args.length === 0) return message.reply('Please provide an ID')
         const members = [...await message.guild.members.fetch()]

@@ -32,7 +32,7 @@ import puppeteer from "puppeteer";
                 let treatedItem = element.replace("R$ ", "").replace(".", "")
                 let lastComma = treatedItem.lastIndexOf(',');
                 let newStr = treatedItem.substring(0, lastComma) + '.' + treatedItem.substring(lastComma + 1);
-                return parseFloat(newStr*1)
+                if(parseFloat(newStr) > 0)return parseFloat(newStr*1)
             })
         if(!treatedArray[0])return message.reply("Carta não encontrada.")
         message.reply(`A carta ${args.join(" ")} está por R$ ${ treatedArray.sort(function(a,b) {

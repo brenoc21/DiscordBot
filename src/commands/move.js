@@ -1,4 +1,6 @@
-export default async function move(message, PermissionsBitField, commandName, args, getMultipleUsersByName, getSingleChannelByName){
+import { getMultipleUsersByName, getSingleChannelByName } from '../utils/findFunctions.js'
+
+export default async function move(message, PermissionsBitField, commandName, args){
     if(args.length < 2) return message.reply("Algum parametro está faltando!")
        const channel = args[args.length-1]
        const users = args.slice(0, args.length - 1)

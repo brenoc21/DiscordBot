@@ -10,6 +10,7 @@ import add from './commands/add.js';
 import play from './commands/play.js';
 import associations from './commands/associations.js';
 import scrap from './commands/scrap.js';
+import roll from './commands/roll.js';
 dotenv.config();
 const client = new Client({ 
     intents: [
@@ -38,20 +39,22 @@ client.on('messageCreate', async (message)=> {
     if(message.content.startsWith(prefix)){
        const [commandName, ...args] = message.content.trim().substring(prefix.length).split(/\s+/)
        switch(commandName){
-        case 'kick':kick(message, PermissionsBitField, args, getSingleUserByName)
+        case 'kick':kick(message, PermissionsBitField, args)
         break;
-        case 'move':move(message, PermissionsBitField, commandName, args, getMultipleUsersByName, getSingleChannelByName)
+        case 'move':move(message, PermissionsBitField, commandName, args)
         break;
-        case 'dc': disconnect(message, PermissionsBitField, commandName, args, getMultipleUsersByName)
+        case 'dc': disconnect(message, PermissionsBitField, commandName, args)
         break;
-        case 'moveAll': moveAll(message, PermissionsBitField, args, getSingleChannelByName)
-        case 'add': add(client, message, args, getSingleUserByName, getSingleChannelByName)
+        case 'moveAll': moveAll(message, PermissionsBitField, args)
+        case 'add': add(client, message, args)
         break;
         case 'play': play(client, message, args)
         break;
         case 'associations': associations(client, message, args)
         break;
         case 'scrap': scrap(message, args, commandName)
+        break;
+        case 'roll': roll(message, args, commandName)
         break;
         default: message.reply(`Commando ${commandName} não foi encontrado.`)
        }
